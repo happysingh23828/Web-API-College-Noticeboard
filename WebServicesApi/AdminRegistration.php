@@ -5,6 +5,8 @@
 
 	$db = new AdminOperation();
 
+
+
 	$result = $db->createAdmin($_POST['Email'],$_POST['Password'],$_POST['Name'],$_POST['CollegeCode'],$_POST['MobileNo'],$_POST['Dob'],$_POST['Gender'],$_POST['CollegeName'],$_POST['CollegeCity'],$_POST['CollegeState'],$_POST['CollegeLogo'],$_POST['AdminPhoto']);
 
 	if($result==1)

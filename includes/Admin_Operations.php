@@ -68,6 +68,97 @@
 
 		}
 
+		public function addPerson($Email,$Password,$Name,$CollegeCode,$MobileNo,$Dob,$Gender,$PersonPhoto,$Role,$Dept,$TgFlag,$TgSem)
+		{
+			
+			if($this->isPersonExist($Email))
+			{
+				return 2;
+			}
+
+			else
+			{	
+					
+
+					if(file_put_contents('../Storage/PersonProfiles/Person'.$Email.'.png',base64_decode($PersonPhoto)))
+					{
+
+							$Password = md5($Password);
+							$PersonPhotoName = 'Person'.$Email.'.png';
+							$stmt = $this->con->prepare('INSERT INTO `person` (`email`, `password`, `name`, `mobileno`, `dob`, `gender`, `collegecode`, `personprofile`, `tgflag`, `tgsem`, `dept`, `role`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);');
+
+							$stmt->bind_param("ssssssssssss",$Email,$Password,$Name,$MobileNo,$Dob,$Gender,$CollegeCode,$PersonPhotoName,$TgFlag,$TgSem,$Dept,$Role);
+
+							if($stmt->execute())
+							{
+								return 1;
+							}
+							else
+								return 0;		
+
+					}else 
+						return 0;
+
+			}
+
+
+		}
+
+		public function isPersonExist($Email) // Function For Checking Admin Person Exist OR not......
+		{
+				
+			$stmt = $this->con->prepare('select * from person where email = ? ;');
+			$stmt->bind_param("s",$Email);
+			$stmt->execute();
+			$stmt->store_result();
+			return $stmt->num_rows > 0;
+
+		}
+
+		public function adminLogin($Email,$Password)
+		{
+			
+			if($this->checkAdminInDB($Email))
+			{
+
+				$Password = md5($Password);
+				$stmt = $this->con->prepare('select * from admin where email = ? AND password = ?;');
+				$stmt->bind_param("ss",$Email,$Password);
+				$stmt->execute();
+				$stmt->store_result();
+				return $stmt->num_rows > 0;
+			}
+
+			else
+			{
+				return 2;
+			}
+
+		}
+
+		public function getAdminDetailsByEmail($Email)
+		{
+			$stmt = $this->con->prepare('SELECT * from admin where email = ?;');
+			$stmt->bind_param("s",$email);
+			$stmt->execute();
+			return $stmt->get_result()->fetch_assoc();
+		}
+
+		public function checkAdminInDB($Email) // Function For Checking Admin Person Exist OR not......
+		{
+				
+			$stmt = $this->con->prepare('select * from admin where email = ? ;');
+			$stmt->bind_param("s",$Email);
+			$stmt->execute();
+			$stmt->store_result();
+			return $stmt->num_rows > 0;
+
+		}
+
+
+
+
+
 		
 		
 
