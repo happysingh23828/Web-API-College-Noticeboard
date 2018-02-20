@@ -139,8 +139,9 @@
 		public function getAdminDetailsByEmail($Email)
 		{
 			$stmt = $this->con->prepare('SELECT * from admin where email = ?;');
-			$stmt->bind_param("s",$email);
+			$stmt->bind_param("s",$Email);
 			$stmt->execute();
+
 			return $stmt->get_result()->fetch_assoc();
 		}
 
