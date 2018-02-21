@@ -1,4 +1,8 @@
 <?php 
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
  class FaluctyOperation{
 
     
@@ -33,9 +37,110 @@
 			return $stmt->get_result()->fetch_assoc();	
 		}
 
+        public function createStudent($Email,$Password,$Name,$CollegeCode,$MobileNo,$Dob,$Gender,$Dept,$Sem,$TgEmail,$Enrollment,$StudentPhoto)
+        {
+        	if($this->isStudentExist($Email,$CollegeCode))
+			{
+				return 2;
+			}
 
+			else
+			{	
+					
+
+					if(file_put_contents('../Storage/StudentProfiles/Student'.$CollegeCode.'.png',base64_decode($StudentPhoto)))
+					{
+
+							$Password = md5($Password);
+							$StudentPhotoName = 'Student'.$CollegeCode.'.png';
+							$stmt = $this->con->prepare('INSERT INTO `student` (`email`, `name`, `collegecode`, `password`, `mobileno`, `dob`, `gender`, `studentprofile`, `dept`, `sem`, `tgemail`, `enrollment`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);');
+
+
+							$stmt->bind_param("sssssssssss",$Email,$Name,$CollegeCode,$Password,$MobileNo,$Dob,$Gender,$StudentPhotoName,$Dept,$Sem,$TgEmail);
+
+							if($stmt->execute())
+							{
+								return 1;
+							}
+							else
+								return 0;		
+
+						
+					}else 
+						return 0;
+
+            }
+        }
+
+        public function isStudentExist($Email,$CollegeCode) // Function For Checking Admin Already Exist OR not......
+		{
+				
+			$stmt = $this->con->prepare('select * from student where email = ? OR collegecode = ? ;');
+			$stmt->bind_param("ss",$Email,$CollegeCode);
+			$stmt->execute();
+			$stmt->store_result();
+			return $stmt->num_rows > 0;
+
+		}
+
+
+        public function createNoticeCollege($CollegCode,$AutherEmail,$Time,$Title,$Type,$String,$Image){
+	       if(file_put_contents('../Storage/CollegeNotice/Title'.$Title.'.png',base64_decode($Image))){
+
+	         $stmt = $this->con->prepare('INSERT INTO `notice_college`(`collegecode`, `authoremail`, `time`, `title`, `type`, `String`, `Image`) VALUES (?,?,?,?,?,?,?);');
+
+
+
+	         $stmt->bind_param("sssssss",$CollegCode,$AutherEmail,$Time,$Title,$Type,$String,$Image);
+
+	         if($stmt->execute())
+			 {
+			    return 1;
+			 }
+			  else
+				return 0;
+	     }
+        }
+
+        public function createNoticeDept($CollegCode,$AutherEmail,$Time,$Title,$Dept,$String,$Image){
+         if(file_put_contents('../Storage/DeptNotice/Title'.$Title.'.png',base64_decode($Image))){
+
+		          $stmt = $this->con->prepare('INSERT INTO `notice_dept`(`collegecode`, `authoremail`, `time`, `title`, `dept`, `string`, `image`) VALUES  (?,?,?,?,?,?,?);');
+
+
+
+		         $stmt->bind_param("sssssss",$CollegCode,$AutherEmail,$Time,$Title,$Dept,$String,$Image);
+
+		         if($stmt->execute())
+				 {
+				    return 1;
+				 }
+				  else
+					return 0;
+		    }    
+        }
+
+
+        public function createNoticeTg($CollegCode,$AutherEmail,$Time,$Title,$Dept,$sem,$String,$Image){
+         if(file_put_contents('../Storage/TgNotice/Title'.$Title.'.png',base64_decode($Image))){
+
+		         $stmt = $this->con->prepare('INSERT INTO `notice_tg`(`collegecode`, `authoremail`, `time`, `title`, `dept`, `sem`, `Image`, `String`) VALUES (?,?,?,?,?,?,?,?);');
+
+
+
+		         $stmt->bind_param("ssssssss",$CollegCode,$AutherEmail,$Time,$Title,$Dept,$sem,$String,$Image);
+
+		         if($stmt->execute())
+				 {
+				    return 1;
+				 }
+				  else
+					return 0;
+          }     
+        }
 
 		/*All Oprations Realted To Faculty*/
 
- }
+
+}
 
