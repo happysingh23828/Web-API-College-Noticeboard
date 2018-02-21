@@ -139,6 +139,100 @@ ini_set('display_errors', 1);
           }     
         }
 
+
+        public function UpdateCollegeNotice($id,$CollegCode,$AutherEmail,$Time,$Title,$Type,$String,$Image){
+         if(file_put_contents('../Storage/TgNotice/Title'.$Title.'.png',base64_decode($Image))){
+
+                 $stmt = $this->con->prepare("UPDATE notice_college SET id=?,collegecode=?,authoremail=?,time=?,title=?,type=?,String=?,Image=? WHERE id=?;");
+                
+		         $stmt->bind_param("sssssssss",$id,$CollegCode,$AutherEmail,$Time,$Title,$Type,$String,$Image,$id);
+
+		         if($stmt->execute())
+				 {
+				    return 1;
+				 }
+				  else
+					return 0;
+          }  
+        }
+
+         public function UpdateDeptNotice($id,$CollegCode,$AutherEmail,$Time,$Title,$Dept,$String,$Image){
+         if(file_put_contents('../Storage/TgNotice/Title'.$Title.'.png',base64_decode($Image))){
+
+                 $stmt = $this->con->prepare("UPDATE notice_dept SET id=?,collegecode=?,authoremail=?,time=?,title=?,dept=?,string=?,image=? WHERE id=?;");
+                
+		         $stmt->bind_param("sssssssss",$id,$CollegCode,$AutherEmail,$Time,$Title,$Dept,$String,$Image,$id);
+
+		         if($stmt->execute())
+				 {
+				    return 1;
+				 }
+				  else
+					return 0;
+          }  
+        }
+
+        public function UpdateTgNotice($id,$CollegCode,$AutherEmail,$Time,$Title,$Dept,$Sem,$String,$Image){
+         if(file_put_contents('../Storage/TgNotice/Title'.$Title.'.png',base64_decode($Image))){
+
+                 $stmt = $this->con->prepare("UPDATE notice_tg SET id=?,collegecode=?,authoremail=?,time=?,title=?,dept=?,sem=?,string=?,image=? WHERE id=?;");
+                
+		         $stmt->bind_param("ssssssssss",$id,$CollegCode,$AutherEmail,$Time,$Title,$Dept,$Sem,$String,$Image,$id);
+
+		         if($stmt->execute())
+				 {
+				    return 1;
+				 }
+				  else
+					return 0;
+          }  
+        }
+        
+        public function DeleteCollegeNotice($Id){
+
+                 $stmt = $this->con->prepare("DELETE FROM notice_college WHERE id=?;");
+                
+		         $stmt->bind_param("s",$Id);
+
+		         if($stmt->execute())
+				 {
+				    return 1;
+				 }
+				  else
+					return 0;
+          
+        }
+
+        public function DeleteDeptNotice($Id){
+
+                 $stmt = $this->con->prepare("DELETE FROM notice_dept WHERE id=?;");
+                
+		         $stmt->bind_param("s",$Id);
+
+		         if($stmt->execute())
+				 {
+				    return 1;
+				 }
+				  else
+					return 0;
+          
+        }
+
+         public function DeleteTgNotice($Id){
+
+                 $stmt = $this->con->prepare("DELETE FROM notice_tg WHERE id=?;");
+                
+		         $stmt->bind_param("s",$Id);
+
+		         if($stmt->execute())
+				 {
+				    return 1;
+				 }
+				  else
+					return 0;
+          
+        }
+
 		/*All Oprations Realted To Faculty*/
 
 
