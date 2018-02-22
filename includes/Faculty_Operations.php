@@ -85,13 +85,15 @@ ini_set('display_errors', 1);
 
 
         public function createNoticeCollege($CollegCode,$AutherEmail,$Time,$Title,$Type,$String,$Image){
+
 	       if(file_put_contents('../Storage/CollegeNotice/Title'.$Title.'.png',base64_decode($Image))){
 
+	       	 $NoticeImage = 'Title'.$Title.'.png';
 	         $stmt = $this->con->prepare('INSERT INTO `notice_college`(`collegecode`, `authoremail`, `time`, `title`, `type`, `String`, `Image`) VALUES (?,?,?,?,?,?,?);');
 
 
 
-	         $stmt->bind_param("sssssss",$CollegCode,$AutherEmail,$Time,$Title,$Type,$String,$Image);
+	         $stmt->bind_param("sssssss",$CollegCode,$AutherEmail,$Time,$Title,$Type,$String,$NoticeImage);
 
 	         if($stmt->execute())
 			 {
@@ -231,6 +233,20 @@ ini_set('display_errors', 1);
 				  else
 					return 0;
           
+        }
+
+        public function deleteStudent($Email,$CollegeCode)
+        {
+        	$stmt = $this->con->prepare("DELETE FROM student WHERE email=? AND collegecode=?;");
+                
+		         $stmt->bind_param("ss",$Email,$CollegeCode);
+
+		         if($stmt->execute())
+				 {
+				    return 1;
+				 }
+				  else
+					return 0;
         }
 
 		/*All Oprations Realted To Faculty*/

@@ -12,9 +12,9 @@
 
 
 
-				if($db->userlogin($_POST['email'],$_POST['password']))
+				if($db->facultyLogin($_POST['email'],$_POST['password']))
 				{
-					$user = $db->getUserByEMail($_POST['email']);
+					$user = $db->getFacultyByEMail($_POST['email']);
 					$response['error']= false;
 					$response['Email']= $user['email'];
 					$response['Name'] = $user['name'];

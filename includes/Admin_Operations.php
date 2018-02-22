@@ -156,6 +156,103 @@
 
 		}
 
+		public function updateAdmin($Email,$CollegeCode,$type,$data)
+		{
+			
+			if($type=="CollegeLogo")
+			{
+
+				if(file_put_contents('../Storage/CollegeIcons/Logo'.$CollegeCode.'.png',base64_decode($data)))
+				{
+					$CollegeLogoName = 'Logo'.$CollegeCode.'.png';
+					$stmt = $this->con->prepare('UPDATE admin SET collegelogo=?  WHERE email=? AND collegecode=?;');
+					$stmt->bind_param("sss",$CollegeLogoName,$Email,$CollegeCode);
+				}
+
+			}
+			else if ($type=="Email")
+			 {
+					$stmt = $this->con->prepare('UPDATE admin SET email=?  WHERE email=? AND collegecode=?;');
+					$stmt->bind_param("sss",$data,$Email,$CollegeCode);
+
+			}
+			else if ($type=="Password") 
+			{
+					$data= md5($data);
+					$stmt = $this->con->prepare('UPDATE admin SET password=?  WHERE email=? AND collegecode=?;');
+					$stmt->bind_param("sss",$data,$Email,$CollegeCode);
+
+			}
+			elseif ($type=="ProfilePhoto")
+			{
+				if(file_put_contents('../Storage/AdminProfiles/Admin'.$CollegeCode.'.png',base64_decode($data)))
+				{
+					$CollegePhotoName = 'Admin'.$CollegeCode.'.png';
+					$stmt = $this->con->prepare('UPDATE admin SET profilephoto=?  WHERE email=? AND collegecode=?;');
+					$stmt->bind_param("sss",$CollegePhotoName,$Email,$CollegeCode);
+				}
+			}
+
+			if($stmt->execute())
+			{
+				return 1;
+			}
+			else
+				return 0;	
+		}
+
+
+		public function deleteAdmin($CollegeCode)
+		{
+			$stmt = array();
+			$stmt[0] = $this->con->prepare("DELETE FROM admin WHERE collegecode=?;");
+			$stmt[1] = $this->con->prepare("DELETE FROM person WHERE collegecode=?;");
+			$stmt[2] = $this->con->prepare("DELETE FROM student WHERE collegecode=?;");
+			$stmt[3]= $this->con->prepare("DELETE FROM content WHERE collegecode=?;");
+			$stmt[4]= $this->con->prepare("DELETE FROM notice_college WHERE collegecode=?;");
+			$stmt[5]= $this->con->prepare("DELETE FROM notice_dept WHERE collegecode=?;");
+			$stmt[6]= $this->con->prepare("DELETE FROM notice_tg WHERE collegecode=?;");
+			$stmt[7]= $this->con->prepare("DELETE FROM college_time_table WHERE collegecode=?;");
+			$stmt[8]= $this->con->prepare("DELETE FROM academic_calender WHERE collegecode=?;");
+
+			for ($i=0; $i <9 ; $i++) { 
+
+				$stmt[$i]->bind_param("s",$CollegeCode);
+
+			}
+
+			for ($i=0; $i <9 ; $i++) { 
+
+				$stmt[$i]->execute();
+
+			}
+
+		}
+
+		public function deletePerson($Email)
+		{
+			if($this->isPersonExist($Email))
+			{
+				$stmt = $this->con->prepare("DELETE FROM person WHERE email=?;");
+            	$stmt->bind_param("s",$Email);
+
+				   	if($stmt->execute())
+					{
+						return 1;
+					}
+					else
+						return 0;
+			}
+
+			else 
+			{
+				return 2;
+			}
+		}
+
+
+
+
 
 
 
