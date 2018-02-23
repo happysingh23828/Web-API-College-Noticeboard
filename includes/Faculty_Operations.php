@@ -48,11 +48,11 @@ ini_set('display_errors', 1);
 			{	
 					
 
-					if(file_put_contents('../Storage/StudentProfiles/Student'.$CollegeCode.'.png',base64_decode($StudentPhoto)))
+					if(file_put_contents('../Storage/StudentProfiles/Student'.$Email.'.png',base64_decode($StudentPhoto)))
 					{
 
 							$Password = md5($Password);
-							$StudentPhotoName = 'Student'.$CollegeCode.'.png';
+							$StudentPhotoName = 'Student'.$Email.'.png';
 							$stmt = $this->con->prepare('INSERT INTO `student` (`email`, `name`, `collegecode`, `password`, `mobileno`, `dob`, `gender`, `studentprofile`, `dept`, `sem`, `tgemail`, `enrollment`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);');
 
 
@@ -198,6 +198,7 @@ ini_set('display_errors', 1);
 
 		         if($stmt->execute())
 				 {
+				 	
 				    return 1;
 				 }
 				  else
@@ -237,12 +238,15 @@ ini_set('display_errors', 1);
 
         public function deleteStudent($Email,$CollegeCode)
         {
+        		
         	$stmt = $this->con->prepare("DELETE FROM student WHERE email=? AND collegecode=?;");
                 
 		         $stmt->bind_param("ss",$Email,$CollegeCode);
 
 		         if($stmt->execute())
 				 {
+				 	unlink('../Storage/StudentProfiles/Student'.$Email.'.png');
+			
 				    return 1;
 				 }
 				  else

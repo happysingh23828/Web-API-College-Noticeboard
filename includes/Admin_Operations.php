@@ -204,6 +204,10 @@
 
 		public function deleteAdmin($CollegeCode)
 		{
+
+
+			unlink('../Storage/AdminProfiles/Admin'.$CollegeCode.'.png');
+
 			$stmt = array();
 			$stmt[0] = $this->con->prepare("DELETE FROM admin WHERE collegecode=?;");
 			$stmt[1] = $this->con->prepare("DELETE FROM person WHERE collegecode=?;");
@@ -233,6 +237,7 @@
 		{
 			if($this->isPersonExist($Email))
 			{
+				unlink('../Storage/PersonProfiles/Person'.$Email.'.png');
 				$stmt = $this->con->prepare("DELETE FROM person WHERE email=?;");
             	$stmt->bind_param("s",$Email);
 
