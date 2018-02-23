@@ -15,40 +15,59 @@
 
         public function GetCollegeNotice($CollegeCode,$Type)
         {
-            
-                 $stmt = $this->con->prepare("SELECT * FROM notice_college WHERE collegecode=? AND type=?");
-                 $stmt->bind_param("ss",$CollegeCode,$type);
-			     $stmt->execute();
-                 if($stmt->num_rows > 0)
-			        return $stmt->get_result()->fetch_assoc();
-                 else
-                 	return null;
+                    $connection=mysqli_connect('localhost','root','','college_noticeboard');
+                    $query="SELECT * FROM notice_college WHERE collegecode='$CollegeCode' AND type='$Type'";
+                    $result=mysqli_query($connection,$query);
+                    
+                    
+                   if (mysqli_num_rows($result)==0) 
+                    {
+                        mysqli_close($connection);
+                        return 2; 
+                    }             
+                    else
+                    {
+                        return $result;
+                    }
                  
         } 
 
         public function GetDeptNotice($CollegeCode,$Dept)
         {
-            
-                 $stmt = $this->con->prepare("SELECT * FROM notice_dept WHERE collegecode=? AND dept=?");
-                 $stmt->bind_param("ss",$CollegeCode,$Dept);
-			     $stmt->execute();
-                 if($stmt->num_rows > 0)
-			        return $stmt->get_result()->fetch_assoc();
-                 else
-                 	return null;
+                    
+                    $connection=mysqli_connect('localhost','root','','college_noticeboard');
+                    $query="SELECT * FROM notice_dept WHERE collegecode='$CollegeCode' AND dept='$Dept'";
+                    $result=mysqli_query($connection,$query);
+                    
+                    
+                    if (mysqli_num_rows($result)==0) 
+                    {
+                        mysqli_close($connection);
+                        return 2; 
+                    }             
+                    else
+                    {
+                        return $result;
+                    }
 
         } 
 
         public function GetTgNotice($TgEmail)
         {
             
-                 $stmt = $this->con->prepare("SELECT * FROM notice_tg WHERE tgemail=?");
-                 $stmt->bind_param("s",$TgEmail);
-			     $stmt->execute();
-                 if($stmt->num_rows > 0)
-			        return $stmt->get_result()->fetch_assoc();
-                 else
-                 	return null;
+                    $connection=mysqli_connect('localhost','root','','college_noticeboard');
+                    $query="SELECT * FROM notice_tg WHERE authoremail='$TgEmail';";
+                    $result=mysqli_query($connection,$query);
+                    
+                    if (mysqli_num_rows($result)==0) 
+                    {
+                        mysqli_close($connection);
+                        return 2; 
+                    }             
+                    else
+                    {
+                        return $result;
+                    }
 
         } 
 
