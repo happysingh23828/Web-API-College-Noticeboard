@@ -104,6 +104,48 @@
                 return 0;   
         }
 
+        
+        public function studentLogin($Email,$Password)
+        {
+            
+            if($this->checkStudentInDB($Email))
+            {
+
+                $Password = md5($Password);
+                $stmt = $this->con->prepare('select * from student where email = ? AND password = ?;');
+                $stmt->bind_param("ss",$Email,$Password);
+                $stmt->execute();
+                $stmt->store_result();
+                return $stmt->num_rows > 0;
+            }
+
+            else
+            {
+                return 2;
+            }
+
+        }
+
+        public function getStudentDetailsByEmail($Email)
+        {
+            $stmt = $this->con->prepare('SELECT * from student where email = ?;');
+            $stmt->bind_param("s",$Email);
+            $stmt->execute();
+
+            return $stmt->get_result()->fetch_assoc();
+        }
+
+        public function checkStudentInDB($Email) // Function For Checking Admin Person Exist OR not......
+        {
+                
+            $stmt = $this->con->prepare('select * from student where email = ? ;');
+            $stmt->bind_param("s",$Email);
+            $stmt->execute();
+            $stmt->store_result();
+            return $stmt->num_rows > 0;
+
+        }
+
 		/*All Oprations Realted To Student*/
 
  }

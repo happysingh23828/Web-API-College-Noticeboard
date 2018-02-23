@@ -56,7 +56,7 @@ ini_set('display_errors', 1);
 							$stmt = $this->con->prepare('INSERT INTO `student` (`email`, `name`, `collegecode`, `password`, `mobileno`, `dob`, `gender`, `studentprofile`, `dept`, `sem`, `tgemail`, `enrollment`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);');
 
 
-							$stmt->bind_param("sssssssssss",$Email,$Name,$CollegeCode,$Password,$MobileNo,$Dob,$Gender,$StudentPhotoName,$Dept,$Sem,$TgEmail);
+							$stmt->bind_param("ssssssssssss",$Email,$Name,$CollegeCode,$Password,$MobileNo,$Dob,$Gender,$StudentPhotoName,$Dept,$Sem,$TgEmail,$Enrollment);
 
 							if($stmt->execute())
 							{
@@ -75,7 +75,7 @@ ini_set('display_errors', 1);
         public function isStudentExist($Email,$CollegeCode) // Function For Checking Admin Already Exist OR not......
 		{
 				
-			$stmt = $this->con->prepare('select * from student where email = ? OR collegecode = ? ;');
+			$stmt = $this->con->prepare('select * from student where email = ? AND collegecode = ? ;');
 			$stmt->bind_param("ss",$Email,$CollegeCode);
 			$stmt->execute();
 			$stmt->store_result();
