@@ -1,41 +1,44 @@
 <?php
 	require_once '../includes/Faculty_Operations.php';
-
+    
+	
 	$response = array();
-	if($_SERVER['REQUEST_METHOD']=='POST')
-	{
-			if(
-			isset($_POST['email']) and 
-				isset($_POST['password']))
-			{
+
+
 				$db = new FaluctyOperation();
 
 
-
-				if($db->facultyLogin($_POST['email'],$_POST['password']))
+                $result=$db->userlogin($_POST['Email'],$_POST['Password']);
+				
+				if($result==1)
 				{
-					$user = $db->getFacultyByEMail($_POST['email']);
+					$user = $db->getUserByEMail($_POST['Email']);
+					
 					$response['error']= false;
-					$response['Email']= $user['email'];
-					$response['Name'] = $user['name'];
-					$response['Password'] = $user['password'];
-					$response['Dob'] = $user['dob'];
-					$response['Role'] = $user['role'];
 					$response['message'] = "Login Successfuly";
 
-				}else{
+					$response['name'] = $user['name'];
+					$response['email']= $user['email'];
+				    $response['collegecode'] = $user['collegecode']; 
+					$response['mobileno'] = $user['mobileno'];
+					$response['dob'] = $user['dob'];
+					$response['gender'] = $user['gender'];
+                    $response['type'] = "other"; 
+
+					$response['role'] = $user['role'];
+					$response['personprofile'] = $user['personprofile'];
+					
+
+				}else if($result==2){
 					$response['error']= true;
-					$response['message'] = "Invalid Username Or Password";
+		           $response['message'] = "Email Not Found";
+				}
+				else
+				{
+					$response['error']= true;
+					$response['message'] = "Incorrect Password";
 				}
 
-
-			}else{
-
-				$response['error']= true;
-				$response['message'] = "Invalid Request";
-
-			}
-
-		}
+		
 
 echo json_encode($response);			

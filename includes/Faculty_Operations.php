@@ -20,14 +20,33 @@ ini_set('display_errors', 1);
         
 		public function userlogin($email,$password)
 		{
-			$pass = md5($password);
-			$stmt = $this->con->prepare('SELECT email from person where email = ? AND password = ?;');
-			$stmt->bind_param("ss",$email,$password);
-			$stmt->execute();
-			$stmt->store_result();
-			return $stmt->num_rows > 0; 
+			if($this->checkStudentInDB($email))
+            {
+			
+					$pass = md5($password);
+					$stmt = $this->con->prepare('select * from person where email = ? AND password = ?;');
+				    
+					$stmt->bind_param("ss",$email,$pass);
+					$stmt->execute();
+					$stmt->store_result();
+					return $stmt->num_rows > 0; 
+			}
+			else{
+				return 2;
+			}
 
 		}
+
+		public function checkStudentInDB($Email) // Function For Checking Admin Person Exist OR not......
+        {
+                
+            $stmt = $this->con->prepare('select * from person where email = ? ;');
+            $stmt->bind_param("s",$Email);
+            $stmt->execute();
+            $stmt->store_result();
+            return $stmt->num_rows > 0;
+
+        }
 
 		public function getUserByEMail($email)
 		{

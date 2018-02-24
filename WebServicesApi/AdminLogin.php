@@ -10,14 +10,18 @@
 	if($result==1)
 	{
 		$admin = $db->getAdminDetailsByEmail($_POST['Email']);
+		
 		$response['error'] = false;
 		$response['message'] = " Login Successfuly....";
+
 		$response['name'] = $admin['name'];
 		$response['email'] = $admin['email'];
 		$response['collegecode'] = $admin['collegecode'];
 		$response['mobileno'] = $admin['mobileno'];
 		$response['dob'] = $admin['dob'];
 		$response['gender'] = $admin['gender'];
+        $response['type'] = "other";
+		
 		$response['profilephoto'] = $admin['profilephoto'];
 		$response['collegelogo'] = $admin['collegelogo'];
 		$response['collegename'] = $admin['collegename'];

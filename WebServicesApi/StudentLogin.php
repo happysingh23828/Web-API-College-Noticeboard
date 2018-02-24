@@ -10,19 +10,24 @@
 	if($result==1)
 	{
 		$student = $db->getStudentDetailsByEmail($_POST['Email']);
+		
 		$response['error'] = false;
 		$response['message'] = " Login Successfuly....";
+		
 		$response['name'] = $student['name'];
 		$response['email'] = $student['email'];
 		$response['collegecode'] = $student['collegecode'];
 		$response['mobileno'] = $student['mobileno'];
 		$response['dob'] = $student['dob'];
 		$response['gender'] = $student['gender'];
+		$response['type'] = "student";
+
 		$response['studentprofile'] = $student['studentprofile'];
 		$response['dept'] = $student['dept'];
 		$response['sem'] = $student['sem'];
 		$response['tgemail'] = $student['tgemail'];
 		$response['enrollment'] = $student['enrollment'];
+		
 
 	}
 	else if($result==2)
