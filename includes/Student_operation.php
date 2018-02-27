@@ -23,11 +23,12 @@
                    if (mysqli_num_rows($result)==0) 
                     {
                         mysqli_close($connection);
-                        
+                            
                         return 2; 
                     }             
                     else
                     {
+                       
                         return $result;
                     }
                  
@@ -57,7 +58,7 @@
         {
             
                     $connection=mysqli_connect('localhost','root','','college_noticeboard');
-                    $query="SELECT * FROM notice_tg WHERE authoremail='$TgEmail';";
+                    $query="SELECT * FROM notice_tg where authoremail='$TgEmail';";
                     $result=mysqli_query($connection,$query);
                     
                     if (mysqli_num_rows($result)==0) 

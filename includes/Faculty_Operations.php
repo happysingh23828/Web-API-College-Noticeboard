@@ -142,14 +142,15 @@ ini_set('display_errors', 1);
         }
 
 
-        public function createNoticeTg($CollegCode,$AutherEmail,$Time,$Title,$Dept,$sem,$String,$Image){
+        public function createNoticeTg($CollegCode,$AutherEmail,$Time,$Title,$Dept,$sem,$String,$Image,$AuthorName){
          if(file_put_contents('../Storage/TgNotice/Title'.$Title.'.png',base64_decode($Image))){
 
-		         $stmt = $this->con->prepare('INSERT INTO `notice_tg`(`collegecode`, `authoremail`, `time`, `title`, `dept`, `sem`, `Image`, `String`) VALUES (?,?,?,?,?,?,?,?);');
+         		$NoticeImage = 'Title'.$Title.'.png';
+		         $stmt = $this->con->prepare('INSERT INTO `notice_tg`(`collegecode`, `authoremail`, `time`, `title`, `dept`, `sem`, `image`, `string`,`authorname`) VALUES (?,?,?,?,?,?,?,?,?);');
 
 
 
-		         $stmt->bind_param("ssssssss",$CollegCode,$AutherEmail,$Time,$Title,$Dept,$sem,$String,$Image);
+		         $stmt->bind_param("sssssssss",$CollegCode,$AutherEmail,$Time,$Title,$Dept,$sem,$NoticeImage,$String,$AuthorName);
 
 		         if($stmt->execute())
 				 {

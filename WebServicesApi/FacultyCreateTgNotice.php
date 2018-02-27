@@ -5,7 +5,7 @@
 
 	$db = new FaluctyOperation();
 
-	$result = $db->createNoticeTg($_POST['College_Code'],$_POST['Author_Email'],$_POST['Title'],$_POST['Dept'],$_POST['Sem'],$_POST['Time'],$_POST['String'],$_POST['Image']);
+	$result = $db->createNoticeTg($_POST['CollegeCode'],$_POST['AuthorEmail'],$_POST['Time'],$_POST['Title'],$_POST['Dept'],$_POST['Sem'],$_POST['String'],$_POST['Image'],$_POST['AuthorName']);
 
 	if($result==1)
 	{

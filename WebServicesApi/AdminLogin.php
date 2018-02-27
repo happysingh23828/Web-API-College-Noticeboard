@@ -20,8 +20,7 @@
 		$response['mobileno'] = $admin['mobileno'];
 		$response['dob'] = $admin['dob'];
 		$response['gender'] = $admin['gender'];
-        $response['type'] = "other";
-		
+        $response['type'] = "admin";
 		$response['profilephoto'] = $admin['profilephoto'];
 		$response['collegelogo'] = $admin['collegelogo'];
 		$response['collegename'] = $admin['collegename'];

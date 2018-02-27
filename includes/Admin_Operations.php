@@ -115,6 +115,58 @@
 
 		}
 
+
+		public function addHod($Email,$Password,$Name,$CollegeCode,$MobileNo,$Dob,$Gender,$PersonPhoto,$Dept)
+		{
+			
+			if($this->isHodExist($Email))
+			{
+				return 2;
+			}
+
+			else
+			{	
+					
+
+					if(file_put_contents('../Storage/HodProfiles/Hod'.$Email.'.png',base64_decode($PersonPhoto)))
+					{
+
+							$Password = md5($Password);
+							$PersonPhotoName = 'Hod'.$Email.'.png';
+							$stmt = $this->con->prepare('INSERT INTO `hod`(`name`, `email`, `password`, `collegecode`, `mobileno`, `dob`, `gender`, `personphoto`, `dept`) VALUES (?,?,?,?,?,?,?,?,?);');
+
+							$stmt->bind_param("sssssssss",$Name,$Email,$Password,$CollegeCode,$MobileNo,$Dob,$Gender,$PersonPhotoName,$Dept);
+
+							if($stmt->execute())
+							{
+								return 1;
+							}
+							else
+								return 0;		
+
+					}else 
+						return 0;
+
+			}
+
+
+		}
+
+
+
+        public function isHodExist($Email) // Function For Checking Admin Person Exist OR not......
+		{
+				
+			$stmt = $this->con->prepare('select * from hod where email = ? ;');
+			$stmt->bind_param("s",$Email);
+			$stmt->execute();
+			$stmt->store_result();
+			return $stmt->num_rows > 0;
+
+		}
+
+
+
 		public function adminLogin($Email,$Password)
 		{
 			

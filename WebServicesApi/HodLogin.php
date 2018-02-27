@@ -1,18 +1,18 @@
 <?php
-	require_once '../includes/Faculty_Operations.php';
+	require_once '../includes/Hod_Operations.php';
     
 	
 	$response = array();
 
 
-				$db = new FaluctyOperation();
+				$db = new HodOperation();
 
 
-                $result=$db->userlogin($_POST['Email'],$_POST['Password']);
+                $result=$db->hodlogin($_POST['Email'],$_POST['Password']);
 				
 				if($result==1)
 				{
-					$user = $db->getUserByEMail($_POST['Email']);
+					$user = $db->getHodByEMail($_POST['Email']);
 					
 					$response['error']= false;
 					$response['message'] = "Login Successfuly";
@@ -23,12 +23,9 @@
 					$response['mobileno'] = $user['mobileno'];
 					$response['dob'] = $user['dob'];
 					$response['gender'] = $user['gender'];
-                    $response['type'] = "other"; 
+                    $response['type'] = "hod"; 
                     $response['dept'] = $user['dept'];
-					$response['role'] = $user['role'];
-					$response['tgflag']= $user['tgflag'];
-					$response['tgsem'] = $user['tgsem'];
-					$response['personprofile'] = $user['personprofile'];
+					$response['personphoto'] = $user['personphoto'];
 					
 
 				}else if($result==2){

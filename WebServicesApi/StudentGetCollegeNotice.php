@@ -9,9 +9,8 @@
 
 	$result= $db->GetCollegeNotice($_POST['CollegeCode'],$_POST['Type']);
 	
-
-
-
+	
+		
 		$postdata = array();
 		while($row=mysqli_fetch_assoc($result))
 		{
