@@ -56,5 +56,25 @@
 			return $stmt->get_result()->fetch_assoc();	
 		}
 
+		public function getFacultiesList($CollegeCode,$Dept)
+		{
+					$connection=mysqli_connect('localhost','root','','college_noticeboard');
+                    $query="SELECT * FROM person WHERE collegecode='$CollegeCode' AND dept='$Dept'";
+                    $result=mysqli_query($connection,$query);
+                    
+                    
+                   if (mysqli_num_rows($result)==0) 
+                    {
+                        mysqli_close($connection);
+                            
+                        return 2; 
+                    }             
+                    else
+                    {
+                       
+                        return $result;
+                    }
+		}
+
 	}
 ?>

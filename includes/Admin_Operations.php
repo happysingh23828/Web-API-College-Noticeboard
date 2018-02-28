@@ -308,6 +308,29 @@
 		}
 
 
+		public function getHodlist($CollegeCode)
+		{
+			
+					$connection=mysqli_connect('localhost','root','','college_noticeboard');
+                    $query="SELECT * FROM hod WHERE collegecode='$CollegeCode'";
+                    $result=mysqli_query($connection,$query);
+                    
+                    
+                   if (mysqli_num_rows($result)==0) 
+                    {
+                        mysqli_close($connection);
+                            
+                        return 2; 
+                    }             
+                    else
+                    {
+                       
+                        return $result;
+                    }
+		
+		}
+
+
 
 
 

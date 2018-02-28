@@ -273,6 +273,26 @@ ini_set('display_errors', 1);
 					return 0;
         }
 
+        public function getStudentList($TgEmail)
+        {
+        			$connection=mysqli_connect('localhost','root','','college_noticeboard');
+                    $query="SELECT * FROM student WHERE tgemail='$TgEmail'";
+                    $result=mysqli_query($connection,$query);
+                    
+                    
+                   if (mysqli_num_rows($result)==0) 
+                    {
+                        mysqli_close($connection);
+                            
+                        return 2; 
+                    }             
+                    else
+                    {
+                       
+                        return $result;
+                    }
+        }
+
 		/*All Oprations Realted To Faculty*/
 
 
