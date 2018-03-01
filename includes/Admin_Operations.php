@@ -330,6 +330,57 @@
 		
 		}
 
+		public function deleteHod($Email)
+		{
+			
+				unlink('../Storage/HodProfiles/Hod'.$Email.'.png');
+				$stmt = $this->con->prepare("DELETE FROM hod WHERE email=?;");
+            	$stmt->bind_param("s",$Email);
+
+				   	if($stmt->execute())
+					{
+						return 1;
+					}
+					else
+						return 0;
+			
+		}
+
+		public function changePassword($Email,$NewPassword,$Persontype)
+		{
+			$NewPassword = md5($NewPassword);
+
+			if($Persontype=="other")
+			{
+				$stmt = $this->con->prepare("UPDATE person SET password=?  WHERE email=?");
+            	
+			}
+
+			if($Persontype=="student")
+			{
+				$stmt = $this->con->prepare("UPDATE student SET password=?  WHERE email=?");
+            	
+			}
+
+			if($Persontype=="hod")
+			{
+				$stmt = $this->con->prepare("UPDATE hod SET password=?  WHERE email=?");
+            	
+			}
+
+			$stmt->bind_param("ss",$NewPassword,$Email);
+
+				   	if($stmt->execute())
+					{
+						return 1;
+					}
+					else
+						return 0;
+		}
+
+
+
+
 
 
 

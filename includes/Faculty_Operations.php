@@ -256,12 +256,12 @@ ini_set('display_errors', 1);
           
         }
 
-        public function deleteStudent($Email,$CollegeCode)
+        public function deleteStudent($Email)
         {
         		
-        	$stmt = $this->con->prepare("DELETE FROM student WHERE email=? AND collegecode=?;");
+        	$stmt = $this->con->prepare("DELETE FROM student WHERE email=?");
                 
-		         $stmt->bind_param("ss",$Email,$CollegeCode);
+		         $stmt->bind_param("s",$Email);
 
 		         if($stmt->execute())
 				 {

@@ -5,7 +5,7 @@
 
 	$db = new FaluctyOperation();
 
-	$result = $db->deleteStudent($_POST['Email'],$_POST['CollegeCode']);
+	$result = $db->deleteStudent($_POST['Email']);
 
 	if($result==1)
 	{

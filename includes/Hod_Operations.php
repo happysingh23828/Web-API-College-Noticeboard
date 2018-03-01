@@ -58,8 +58,20 @@
 
 		public function getFacultiesList($CollegeCode,$Dept)
 		{
+
 					$connection=mysqli_connect('localhost','root','','college_noticeboard');
-                    $query="SELECT * FROM person WHERE collegecode='$CollegeCode' AND dept='$Dept'";
+            
+				if($Dept=="admin")
+				{
+					$query="SELECT * FROM person WHERE collegecode='$CollegeCode'";
+                    
+				}
+				else
+				{
+					$query="SELECT * FROM person WHERE collegecode='$CollegeCode' AND dept='$Dept'";
+                    
+				}
+
                     $result=mysqli_query($connection,$query);
                     
                     
@@ -75,6 +87,9 @@
                         return $result;
                     }
 		}
+
+
+		
 
 	}
 ?>
