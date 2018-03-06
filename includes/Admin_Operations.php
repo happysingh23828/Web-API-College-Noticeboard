@@ -1,6 +1,10 @@
 <?php 
+include '../includes/Constants.php';
+
+
 
  class AdminOperation{
+
 
     
      private $con;
@@ -15,6 +19,14 @@
 		}
 
 
+         public function getCollege($Email)
+		{
+			$stmt = $this->con->prepare('SELECT * from admin where collegecode = ?;');
+			$stmt->bind_param("s",$Email);
+			$stmt->execute();
+
+			return $stmt->get_result()->fetch_assoc();
+		}
 
 		/*All Oprations Realted To Admin*/
 
@@ -39,7 +51,8 @@
 							$CollegeIconName = 'Logo'.$CollegeCode.'.png';
 							$stmt = $this->con->prepare('INSERT INTO `admin` (`email`, `name`, `collegecode`, `password`, `mobileno`, `dob`, `gender`, `profilephoto`, `collegelogo`, `collegename`, `collegecity`, `collegestate`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);');
 
-							$stmt->bind_param("ssssssssssss",$Email,$Name,$CollegeCode,$Password,$MobileNo,$Dob,$Gender,$AdminPhotoName,$CollegeIconName,$CollegeName,$CollegeCity,$CollegeState);
+						$stmt->bind_param("ssssssssssss",$Email,$Name,$CollegeCode,$Password,$MobileNo,$Dob,$Gender,$AdminPhotoName,$CollegeIconName,$CollegeName,$CollegeCity,$CollegeState);
+
 
 							if($stmt->execute())
 							{
@@ -80,8 +93,7 @@
 			{	
 					
 
-					if(file_put_contents('../Storage/PersonProfiles/Person'.$Email.'.png',base64_decode($PersonPhoto)))
-					{
+					        file_put_contents('../Storage/PersonProfiles/Person'.$Email.'.png',base64_decode($PersonPhoto));
 
 							$Password = md5($Password);
 							$PersonPhotoName = 'Person'.$Email.'.png';
@@ -96,9 +108,7 @@
 							else
 								return 0;		
 
-					}else 
-						return 0;
-
+				
 			}
 
 
@@ -128,9 +138,7 @@
 			{	
 					
 
-					if(file_put_contents('../Storage/HodProfiles/Hod'.$Email.'.png',base64_decode($PersonPhoto)))
-					{
-
+				
 							$Password = md5($Password);
 							$PersonPhotoName = 'Hod'.$Email.'.png';
 							$stmt = $this->con->prepare('INSERT INTO `hod`(`name`, `email`, `password`, `collegecode`, `mobileno`, `dob`, `gender`, `personphoto`, `dept`) VALUES (?,?,?,?,?,?,?,?,?);');
@@ -144,8 +152,7 @@
 							else
 								return 0;		
 
-					}else 
-						return 0;
+				
 
 			}
 
@@ -208,50 +215,6 @@
 
 		}
 
-		public function updateAdmin($Email,$CollegeCode,$type,$data)
-		{
-			
-			if($type=="CollegeLogo")
-			{
-
-				if(file_put_contents('../Storage/CollegeIcons/Logo'.$CollegeCode.'.png',base64_decode($data)))
-				{
-					$CollegeLogoName = 'Logo'.$CollegeCode.'.png';
-					$stmt = $this->con->prepare('UPDATE admin SET collegelogo=?  WHERE email=? AND collegecode=?;');
-					$stmt->bind_param("sss",$CollegeLogoName,$Email,$CollegeCode);
-				}
-
-			}
-			else if ($type=="Email")
-			 {
-					$stmt = $this->con->prepare('UPDATE admin SET email=?  WHERE email=? AND collegecode=?;');
-					$stmt->bind_param("sss",$data,$Email,$CollegeCode);
-
-			}
-			else if ($type=="Password") 
-			{
-					$data= md5($data);
-					$stmt = $this->con->prepare('UPDATE admin SET password=?  WHERE email=? AND collegecode=?;');
-					$stmt->bind_param("sss",$data,$Email,$CollegeCode);
-
-			}
-			elseif ($type=="ProfilePhoto")
-			{
-				if(file_put_contents('../Storage/AdminProfiles/Admin'.$CollegeCode.'.png',base64_decode($data)))
-				{
-					$CollegePhotoName = 'Admin'.$CollegeCode.'.png';
-					$stmt = $this->con->prepare('UPDATE admin SET profilephoto=?  WHERE email=? AND collegecode=?;');
-					$stmt->bind_param("sss",$CollegePhotoName,$Email,$CollegeCode);
-				}
-			}
-
-			if($stmt->execute())
-			{
-				return 1;
-			}
-			else
-				return 0;	
-		}
 
 
 		public function deleteAdmin($CollegeCode)
@@ -311,7 +274,7 @@
 		public function getHodlist($CollegeCode)
 		{
 			
-					$connection=mysqli_connect('localhost','root','','college_noticeboard');
+					$connection=mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
                     $query="SELECT * FROM hod WHERE collegecode='$CollegeCode'";
                     $result=mysqli_query($connection,$query);
                     
@@ -376,6 +339,118 @@
 					}
 					else
 						return 0;
+		}
+
+
+		public function updateAdmin($Email,$type,$data)
+		{
+			
+			if($type=="CollegeLogo")
+			{
+
+				
+
+			}
+			else if ($type=="email")
+			 {
+					
+                   $stmt = $this->con->prepare('UPDATE admin SET email=?  WHERE email=?;');
+					$stmt->bind_param("ss",$data,$Email);
+					if($stmt->execute())
+					{
+						$stmt2 = $this->con->prepare('UPDATE notice_college SET authoremail=?  WHERE authoremail=?;');
+                        $stmt2->bind_param("ss",$data,$Email);
+                        $stmt2->execute();
+                         
+                         return 1;
+					}
+					else
+						return 0;
+			}
+			
+                   
+			
+			else if ($type=="name")
+			 {
+					$stmt = $this->con->prepare('UPDATE admin SET name=?  WHERE email=?;');
+					$stmt->bind_param("ss",$data,$Email);
+					if($stmt->execute())
+					{
+						return 1;
+					}
+					else
+						return 0;
+
+			}
+			else if ($type=="gender")
+			 {
+					$stmt = $this->con->prepare('UPDATE admin SET gender=?  WHERE email=?;');
+					$stmt->bind_param("ss",$data,$Email);
+					if($stmt->execute())
+					{
+						return 1;
+					}
+					else
+						return 0;
+
+
+			}
+			else if ($type=="mobileno")
+			 {
+					$stmt = $this->con->prepare('UPDATE admin SET mobileno=?  WHERE email=?;');
+					$stmt->bind_param("ss",$data,$Email);
+					if($stmt->execute())
+					{
+						return 1;
+					}
+					else
+						return 0;
+
+			}
+			else if($type=="dob"){
+            
+                    $stmt = $this->con->prepare('UPDATE admin SET dob=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0;
+            }
+			
+	
+		}
+
+
+		public function updateAdminImage($CollegeCode,$data)
+		{
+              if(file_put_contents('../Storage/AdminProfiles/Admin'.$CollegeCode.'.png',base64_decode($data))){
+                   return 1;
+              }    
+              else
+              	 return 0;
+		}
+
+			public function getFacultyList($CollegeCode)
+		{
+			
+					$connection=mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+                    $query="SELECT * FROM person WHERE collegecode='$CollegeCode'";
+                    $result=mysqli_query($connection,$query);
+                    
+                    
+                   if (mysqli_num_rows($result)==0) 
+                    {
+                        mysqli_close($connection);
+                            
+                        return 2; 
+                    }             
+                    else
+                    {
+                       
+                        return $result;
+                    }
+		
 		}
 
 

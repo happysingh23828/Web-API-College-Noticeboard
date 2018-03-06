@@ -6,7 +6,7 @@
 	$db = new StudentOperation();
 
 	
-	$result = $db->updateStudent($_POST['Email'],$_POST['CollegeCode'],$_POST['Type'],$_POST['Data']);
+	$result = $db->updateStudent($_POST['Email'],$_POST['Type'],$_POST['Data']);
 	if($result==1)
 	{
 		$response['error'] = false;

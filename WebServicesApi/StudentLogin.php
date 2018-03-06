@@ -1,7 +1,7 @@
 <?php
 	
 	$response = array();
-	include '../includes/Student_Operation.php';
+	include '../includes/Student_operation.php';
 
 	$db = new StudentOperation();
 

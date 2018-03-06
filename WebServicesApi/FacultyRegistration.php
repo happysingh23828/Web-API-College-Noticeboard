@@ -5,7 +5,6 @@
 
 	$db = new AdminOperation();
 
-	
 
 	$result = $db->addPerson($_POST['Email'],$_POST['Password'],$_POST['Name'],$_POST['CollegeCode'],$_POST['MobileNo'],$_POST['Dob'],$_POST['Gender'],$_POST['PersonPhoto'],$_POST['Role'],$_POST['Dept'],$_POST['TgFlag'],$_POST['TgSem']);
 

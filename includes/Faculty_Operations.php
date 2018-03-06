@@ -2,6 +2,7 @@
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+include '../includes/Constants.php';
 
  class FaluctyOperation{
 
@@ -103,16 +104,16 @@ ini_set('display_errors', 1);
 		}
 
 
-        public function createNoticeCollege($CollegCode,$AutherEmail,$Time,$Title,$Type,$String,$Image){
+        public function createNoticeCollege($CollegCode,$AuthorName,$AutherEmail,$Time,$Title,$Type,$String,$Image,$Authortype){
 
 	       if(file_put_contents('../Storage/CollegeNotice/Title'.$Title.'.png',base64_decode($Image))){
 
 	       	 $NoticeImage = 'Title'.$Title.'.png';
-	         $stmt = $this->con->prepare('INSERT INTO `notice_college`(`collegecode`, `authoremail`, `time`, `title`, `type`, `String`, `Image`) VALUES (?,?,?,?,?,?,?);');
+	         $stmt = $this->con->prepare('INSERT INTO `notice_college`(`collegecode`, `authoremail`,`authorname`, `time`, `title`, `type`, `String`, `Image`,`authortype`) VALUES (?,?,?,?,?,?,?,?,?);');
 
 
 
-	         $stmt->bind_param("sssssss",$CollegCode,$AutherEmail,$Time,$Title,$Type,$String,$NoticeImage);
+	         $stmt->bind_param("sssssssss",$CollegCode,$AutherEmail,$AuthorName,$Time,$Title,$Type,$String,$NoticeImage,$Authortype);
 
 	         if($stmt->execute())
 			 {
@@ -123,14 +124,17 @@ ini_set('display_errors', 1);
 	     }
         }
 
-        public function createNoticeDept($CollegCode,$AutherEmail,$Time,$Title,$Dept,$String,$Image){
+        public function createNoticeDept($CollegCode,$AutherEmail,$Title,$Dept,$Time,$String,$Image,$AuthorName,$Authortype){
+
+        	
          if(file_put_contents('../Storage/DeptNotice/Title'.$Title.'.png',base64_decode($Image))){
 
-		          $stmt = $this->con->prepare('INSERT INTO `notice_dept`(`collegecode`, `authoremail`, `time`, `title`, `dept`, `string`, `image`) VALUES  (?,?,?,?,?,?,?);');
+         		  $Image = 'Title'.$Title.'.png';	
+		          $stmt = $this->con->prepare('INSERT INTO `notice_dept`(`collegecode`, `authoremail`, `time`, `title`, `dept`, `string`, `image`,`authorname`,`authortype`) VALUES  (?,?,?,?,?,?,?,?,?);');
 
 
 
-		         $stmt->bind_param("sssssss",$CollegCode,$AutherEmail,$Time,$Title,$Dept,$String,$Image);
+		         $stmt->bind_param("sssssssss",$CollegCode,$AutherEmail,$Time,$Title,$Dept,$String,$Image,$AuthorName,$Authortype);
 
 		         if($stmt->execute())
 				 {
@@ -142,15 +146,15 @@ ini_set('display_errors', 1);
         }
 
 
-        public function createNoticeTg($CollegCode,$AutherEmail,$Time,$Title,$Dept,$sem,$String,$Image,$AuthorName){
+        public function createNoticeTg($CollegCode,$AutherEmail,$Time,$Title,$Dept,$sem,$String,$Image,$AuthorName,$Authortype){
          if(file_put_contents('../Storage/TgNotice/Title'.$Title.'.png',base64_decode($Image))){
 
          		$NoticeImage = 'Title'.$Title.'.png';
-		         $stmt = $this->con->prepare('INSERT INTO `notice_tg`(`collegecode`, `authoremail`, `time`, `title`, `dept`, `sem`, `image`, `string`,`authorname`) VALUES (?,?,?,?,?,?,?,?,?);');
+		         $stmt = $this->con->prepare('INSERT INTO `notice_tg`(`collegecode`, `authoremail`, `time`, `title`, `dept`, `sem`, `image`, `string`,`authorname`,`authortype`) VALUES (?,?,?,?,?,?,?,?,?,?);');
 
 
 
-		         $stmt->bind_param("sssssssss",$CollegCode,$AutherEmail,$Time,$Title,$Dept,$sem,$NoticeImage,$String,$AuthorName);
+		         $stmt->bind_param("ssssssssss",$CollegCode,$AutherEmail,$Time,$Title,$Dept,$sem,$NoticeImage,$String,$AuthorName,$Authortype);
 
 		         if($stmt->execute())
 				 {
@@ -212,11 +216,13 @@ ini_set('display_errors', 1);
         
         public function DeleteCollegeNotice($Id){
 
-                 $stmt = $this->con->prepare("DELETE FROM notice_college WHERE id=?;");
+                 $stmt = $this->con->prepare("DELETE FROM notice_college WHERE contentid=?;");
                 
 		         $stmt->bind_param("s",$Id);
 
-		         if($stmt->execute())
+		         $result = $stmt->execute();
+
+		         if($result)
 				 {
 				 	
 				    return 1;
@@ -275,7 +281,7 @@ ini_set('display_errors', 1);
 
         public function getStudentList($TgEmail)
         {
-        			$connection=mysqli_connect('localhost','root','','college_noticeboard');
+        			$connection=mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
                     $query="SELECT * FROM student WHERE tgemail='$TgEmail'";
                     $result=mysqli_query($connection,$query);
                     
@@ -292,6 +298,140 @@ ini_set('display_errors', 1);
                         return $result;
                     }
         }
+
+        public function getTgStudent($Email)
+        {
+        	  	$stmt = $this->con->prepare("SELECT token FROM student WHERE tgemail = ?");
+		        $stmt->bind_param("s",$Email);
+		        $stmt->execute(); 
+		        $result = $stmt->get_result()->fetch_assoc();
+		        return array($result['token']);   	
+        }
+
+          public function getAllDeptTokens($CollegeCode,$Dept)
+        {
+
+        		$stmt = $this->con->prepare("SELECT token FROM student WHERE collegecode = ? AND dept = ? UNION SELECT token FROM person WHERE collegecode = ? AND dept = ? UNION SELECT token FROM hod WHERE collegecode = ? AND dept = ?");
+
+		        $stmt->bind_param("ssssss",$CollegeCode,$Dept,$CollegeCode,$Dept,$CollegeCode,$Dept);
+		        $stmt->execute(); 
+		        $result = $stmt->get_result();
+		        return $result; 
+        	  	 	
+        }
+
+         public function getAllTokens($CollegeCode)
+			{
+				$stmt = $this->con->prepare("SELECT token FROM student WHERE collegecode = ?
+					UNION SELECT token FROM person WHERE collegecode = ? UNION SELECT token FROM hod WHERE collegecode = ? UNION SELECT token FROM admin WHERE collegecode = ?");
+		        $stmt->bind_param("ssss",$CollegeCode,$CollegeCode,$CollegeCode,$CollegeCode);
+		        $stmt->execute(); 
+		        $result = $stmt->get_result();
+		        return $result; 
+
+
+
+			}
+
+		public function getAllTgTokens($CollegeCode,$Email)
+			{
+					$stmt = $this->con->prepare("SELECT token FROM student WHERE collegecode = ? AND tgemail = ? ");
+
+		        $stmt->bind_param("ss",$CollegeCode,$Email);
+		        $stmt->execute(); 
+		        $result = $stmt->get_result();
+		        return $result; 
+        	  	 						
+			}	
+
+	
+
+         public function updateFaculty($Email,$type,$data)
+        {
+             if ($type=="name")
+             {
+                    $stmt = $this->con->prepare('UPDATE person SET name=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0;
+            }
+            
+            else if ($type=="email") 
+            {
+                   
+                   
+		           $stmt = $this->con->prepare('UPDATE person SET email=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    
+                    if($stmt->execute())
+                      {
+                      	$stmt1 = $this->con->prepare('UPDATE student SET tgemail=?  WHERE tgemail=?;');
+                        $stmt1->bind_param("ss",$data,$Email);
+                        $stmt1->execute();
+
+                        $stmt2 = $this->con->prepare('UPDATE notice_dept SET authoremail=?  WHERE authoremail=?;');
+                        $stmt2->bind_param("ss",$data,$Email);
+                        $stmt2->execute();
+                         
+                        $stmt3 = $this->con->prepare('UPDATE notice_tg SET authoremail=?  WHERE authoremail=?;');
+                        $stmt3->bind_param("ss",$data,$Email);
+                        $stmt3->execute();
+                         return 1;
+
+                      }
+                    else
+                      return 0;        
+
+                    
+
+            }
+            elseif ($type=="mobileno")
+            {
+                 
+                    $stmt = $this->con->prepare('UPDATE person SET mobileno=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0; 
+                   
+            }
+            elseif ($type=="gender")
+            {
+                 
+                    $stmt = $this->con->prepare('UPDATE person SET gender=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0; 
+                   
+            }
+            else if($type=="dob"){
+            
+                    $stmt = $this->con->prepare('UPDATE person SET dob=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0;
+            }
+        }
+
+
+       public function updateFacultyImage($CollegeCode,$data,$email)
+		{
+              if(file_put_contents('../Storage/PersonProfiles/Person'.$email.'.png',base64_decode($data))){
+                   return 1;
+              }    
+              else
+              	 return 0;
+		}
+
 
 		/*All Oprations Realted To Faculty*/
 

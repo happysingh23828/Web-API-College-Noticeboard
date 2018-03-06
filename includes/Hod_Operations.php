@@ -1,5 +1,7 @@
 <?php 
 
+include '../includes/Constants.php';
+
  class HodOperation{
 
     
@@ -59,7 +61,7 @@
 		public function getFacultiesList($CollegeCode,$Dept)
 		{
 
-					$connection=mysqli_connect('localhost','root','','college_noticeboard');
+					$connection=mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
             
 				if($Dept=="admin")
 				{
@@ -89,6 +91,83 @@
 		}
 
 
+		public function updateHod($Email,$type,$data)
+        {
+        	$stmt = null;
+            if ($type=="name")
+             {
+                    $stmt = $this->con->prepare('UPDATE hod SET name=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0;
+            }
+            else if($type=="gender"){
+            
+                    $stmt = $this->con->prepare('UPDATE hod SET gender=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0;
+            }
+            else if($type=="mobileno"){
+            
+                    $stmt = $this->con->prepare('UPDATE hod SET mobileno=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0;
+            }
+            else if($type=="dob"){
+            
+                    $stmt = $this->con->prepare('UPDATE hod SET dob=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0;
+            }
+            else if ($type=="email") 
+            {
+                   
+                   
+		           $stmt = $this->con->prepare('UPDATE hod SET email=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    
+                    if($stmt->execute())
+                      {
+                      	
+                        $stmt2 = $this->con->prepare('UPDATE notice_dept SET authoremail=?  WHERE authoremail=?;');
+                        $stmt2->bind_param("ss",$data,$Email);
+                        $stmt2->execute();
+                         
+                         return 1;
+
+                      }
+                    else
+                      return 0;        
+
+                    
+
+            }
+           
+        }
+
+    public function updateHodImage($CollegeCode,$data,$email)
+    {
+              if(file_put_contents('../Storage/HodProfiles/Hod'.$email.'.png',base64_decode($data))){
+                   return 1;
+              }    
+              else
+                 return 0;
+    }
 		
 
 	}

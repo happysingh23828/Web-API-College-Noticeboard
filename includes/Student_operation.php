@@ -1,4 +1,6 @@
 <?php 
+
+include '../includes/Constants.php';
  class StudentOperation{
 
     
@@ -15,7 +17,7 @@
 
         public function GetCollegeNotice($CollegeCode,$Type)
         {
-                    $connection=mysqli_connect('localhost','root','','college_noticeboard');
+                    $connection=mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
                     $query="SELECT * FROM notice_college WHERE collegecode='$CollegeCode' AND type='$Type'";
                     $result=mysqli_query($connection,$query);
                     
@@ -37,7 +39,7 @@
         public function GetDeptNotice($CollegeCode,$Dept)
         {
                     
-                    $connection=mysqli_connect('localhost','root','','college_noticeboard');
+                    $connection=mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
                     $query="SELECT * FROM notice_dept WHERE collegecode='$CollegeCode' AND dept='$Dept'";
                     $result=mysqli_query($connection,$query);
                     
@@ -57,7 +59,7 @@
         public function GetTgNotice($TgEmail)
         {
             
-                    $connection=mysqli_connect('localhost','root','','college_noticeboard');
+                    $connection=mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
                     $query="SELECT * FROM notice_tg where authoremail='$TgEmail';";
                     $result=mysqli_query($connection,$query);
                     
@@ -73,37 +75,65 @@
 
         } 
 
-        public function updateStudent($Email,$CollegeCode,$type,$data)
+        public function updateStudent($Email,$type,$data)
         {
-            if ($type=="Email")
+            $stmt = null;
+            if ($type=="name")
              {
-                    $stmt = $this->con->prepare('UPDATE student SET email=?  WHERE email=? AND collegecode=?;');
-                    $stmt->bind_param("sss",$data,$Email,$CollegeCode);
+                    $stmt = $this->con->prepare('UPDATE student SET name=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0;
+            }
+           
+            else if ($type=="email") 
+            {
+                    
+                    $stmt = $this->con->prepare('UPDATE student SET email=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0;
 
             }
-            else if ($type=="Password") 
+            elseif ($type=="mobileno")
             {
-                    $data= md5($data);
-                    $stmt = $this->con->prepare('UPDATE admin SET password=?  WHERE email=? AND collegecode=?;');
-                    $stmt->bind_param("sss",$data,$Email,$CollegeCode);
+                 
+                    $stmt = $this->con->prepare('UPDATE student SET mobileno=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0; 
+                   
+            }
+            elseif ($type=="gender")
+            {
+                 
+                    $stmt = $this->con->prepare('UPDATE student SET gender=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0; 
+                   
+            }
+            else if($type=="dob"){
+            
+                    $stmt = $this->con->prepare('UPDATE student SET dob=?  WHERE email=?;');
+                    $stmt->bind_param("ss",$data,$Email);
+                    
+                    if($stmt->execute())
+                      return 1;
+                    else
+                      return 0;
+            }
 
-            }
-            elseif ($type=="ProfilePhoto")
-            {
-                if(file_put_contents('../Storage/AdminProfiles/Admin'.$CollegeCode.'.png',base64_decode($data)))
-                {
-                    $ProfilePhoto = 'Admin'.$CollegeCode.'.png';
-                    $stmt = $this->con->prepare('UPDATE admin SET studentprofile=?  WHERE email=? AND collegecode=?;');
-                    $stmt->bind_param("sss",$ProfilePhoto,$Email,$CollegeCode);
-                }
-            }
-
-            if($stmt->execute())
-            {
-                return 1;
-            }
-            else
-                return 0;   
+               
         }
 
         
@@ -147,6 +177,110 @@
             return $stmt->num_rows > 0;
 
         }
+
+        public function getYourSentNotices($Email,$Type)
+        {
+           
+
+                    $connection=mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+                    $query="SELECT * FROM notice_college where authoremail='$Email' AND type='$Type';";
+                    $result=mysqli_query($connection,$query);
+                    
+                    if (mysqli_num_rows($result)==0) 
+                    {
+                        mysqli_close($connection);
+                        return 2; 
+                    }             
+                    else
+                    {
+                        return $result;
+                    }
+        }
+
+        public function getYourDeptNotices($Email)
+        {
+           
+                    $connection=mysqli_connect(DB_HOST,DB_USER,DB_PASSWORD,DB_NAME);
+
+                    $query="SELECT * FROM notice_dept where authoremail='$Email';";
+                
+                    $result=mysqli_query($connection,$query);
+                    
+                    if (mysqli_num_rows($result)==0) 
+                    {
+                        mysqli_close($connection);
+                        return 2; 
+                    }             
+                    else
+                    {
+                        return $result;
+                    }
+        }
+
+        public function deleteDeptNotice($Id)
+        {
+            
+             $stmt = $this->con->prepare("DELETE FROM notice_dept WHERE id=?;");
+
+                 $stmt->bind_param("s",$Id);
+
+                 if($stmt->execute())
+                 {
+                    
+                    return 1;
+                 }
+                  else
+                    return 0;
+        }
+
+        public function sendTokenToserver($Email,$Token,$Type)
+        {
+            $stmt;
+            if($Type=="admin")
+            {
+                    $stmt = $this->con->prepare("UPDATE `admin` SET `token` = ? WHERE `email` = ?;");
+
+            }
+
+             if($Type=="student")
+            {
+                $stmt = $this->con->prepare("UPDATE `student` SET `token` = ? WHERE `email` = ?;");
+
+            }
+
+             if($Type=="hod")
+            {
+                $stmt = $this->con->prepare("UPDATE `hod` SET `token` = ? WHERE `email` = ?;");
+
+            }
+
+
+             if($Type=="other")
+            {
+                $stmt = $this->con->prepare("UPDATE `person` SET `token` = ? WHERE `email` = ?;");
+
+            }
+
+            
+                 $stmt->bind_param("ss",$Token,$Email);
+
+                 if($stmt->execute())
+                 {
+                    
+                    return 1;
+                 }
+                  else
+                    return 0;
+        }
+
+    public function updateStudentImage($CollegeCode,$data,$email)
+    {
+              if(file_put_contents('../Storage/StudentProfiles/Student'.$email.'.png',base64_decode($data))){
+                   return 1;
+              }    
+              else
+                 return 0;
+    }
 
 		/*All Oprations Realted To Student*/
 

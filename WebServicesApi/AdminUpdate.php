@@ -6,7 +6,7 @@
 	$db = new AdminOperation();
 
 	
-	$result = $db->updateAdmin($_POST['Email'],$_POST['CollegeCode'],$_POST['Type'],$_POST['Data']);
+	$result = $db->updateAdmin($_POST['Email'],$_POST['Type'],$_POST['Data']);
 	if($result==1)
 	{
 		
